@@ -1,4 +1,4 @@
-﻿script_name = "StyleSplitChan"
+script_name = "StyleSplitChan"
 script_description = "Use it to Split Styled Bilingual line to 2 lines with specific style";
 script_author = "SuJiKiNen"
 script_version = "1.0"
@@ -100,6 +100,22 @@ function Split(pString, pPattern)
   return Table
 end
 
+function SplitTwo(pString, pPattern)
+	local Table = {}	 -- NOTE: use {n = 0} in Lua-5.0
+	local fpat = "(.-)" .. pPattern
+	local last_end = 1
+	local s, e, cap = pString:find(fpat, 1)
+	if s ~= 1 or cap ~= "" then
+		table.insert(Table,cap)
+	end
+	last_end = e+1
+	if last_end <= #pString then
+		cap = pString:sub(last_end)
+		table.insert(Table, cap)
+	end
+	return Table
+end
+
 function SplitLine(subs,sel)
   buttons,results =aegisub.dialog.display(dialog_config,{"OK","Cancel"})
   if buttons=="OK" then
@@ -129,7 +145,7 @@ function SplitLine(subs,sel)
       if line.class=="dialogue" and line.style==SpecificSplitStyle then
         CurrentProcessLineNum = CurrentProcessLineNum + 1
         SpecificStyleIndex[#SpecificStyleIndex + 1] = i
-        local SplitTextTable = Split(line.text,SplitCharacter)
+        local SplitTextTable = SplitTwo(line.text,SplitCharacter)
         local FirstText = SplitTextTable[1]
         local SecondText = SplitTextTable[2]
         if FirstText then
